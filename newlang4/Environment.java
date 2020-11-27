@@ -8,6 +8,7 @@ public class Environment {
 	   Map<String, Variable> var_table;
 
 	    public Environment(LexicalAnalyzer input) {
+	    	System.out.println("Environment#Constructor");
 	        this.input = input;
 	        var_table = new HashMap<String, Variable>();
 	    }

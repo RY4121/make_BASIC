@@ -10,6 +10,7 @@ public class ProgramNode extends Node {
 
 	@Override
 	public void parse( ) throws Exception {
+		System.out.println("call ProgramNode#parse()");
 		body = handle(Symbol.stmt_list);
 	}
 

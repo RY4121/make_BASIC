@@ -7,10 +7,17 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		InputStream in = new FileInputStream("test1.bas");
-		LexicalAnalyzer lex = new LexicalAnalyzerImpl(in);
-		Environment env = new Environment(lex);
-		Node p = Symbol.program.handle(env); // 構文解析を実行
+		newlang4.LexicalAnalyzer lex = new newlang4.LexicalAnalyzerImpl(in);
+//		Environment env = new Environment(lex);
+//
+//		Node p = Symbol.program.handle(env);
 //		System.out.println(p);
+
+		while (true) {
+			LexicalUnit unit = lex.get();
+			System.out.println(unit);
+			if (unit.getType() == LexicalType.EOF) break;
+		}
 	}
 
 }

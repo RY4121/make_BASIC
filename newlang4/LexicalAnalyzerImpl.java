@@ -4,26 +4,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackReader;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 import java.util.regex.Pattern;
 
 public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 	private Map<String, LexicalType> reserved;
 	private PushbackReader pr;
-	private Queue<String> queue;
+	private Deque<LexicalUnit> peek_deque;
 
 	public LexicalAnalyzerImpl(InputStream in) {
+		System.out.println("LexicalAnalyzerImpl#Constructor");
 		pr = new PushbackReader(new InputStreamReader(in));
 		reserved = new HashMap<>();
 		for (LexicalType type : LexicalType.values()) {
 			reserved.put(type.getNotation(), type);
 		}
+		peek_deque = new LinkedList<>();
 	}
 
-	@Override
-	public LexicalUnit get() throws Exception {
+	public LexicalUnit feed() throws Exception {
 		LexicalType type;
 		while(true) {
 			String var = "";
@@ -32,7 +34,10 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 			int count = pr.read();
 			char c;
 
-			if (count < 0 || count == 65535) return new LexicalUnit(LexicalType.EOF);
+			if (count < 0 || count == 65535) {
+				peek_deque.add(new LexicalUnit(LexicalType.EOF));
+				return new LexicalUnit(LexicalType.EOF);
+			}
 			else c = (char) count;
 			if (isSpace(c)) continue;
 			if (c == '"') return handleLiteral();
@@ -46,6 +51,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 				if (c == '.') {
 					LexicalUnit tempLU = handleDoubleNum();
 					var += '.'+tempLU.getValue().getSValue();
+					peek_deque.add(new LexicalUnit(tempLU.getType(), new ValueImpl(var)));
 					return new LexicalUnit(tempLU.getType(), new ValueImpl(var));
 				} else type = LexicalType.INTVAL;
 
@@ -55,16 +61,28 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 					break;
 				}
 				if (!isDigitOrAlpha(String.valueOf(c))) {
-					if (doubleSymbol) var += c;
+					if (doubleSymbol) {
+						if (!isFourOperation(String.valueOf(c))) {
+							var += c;
+						} else {
+							pr.unread(c);
+						}
+					}
 					else pr.unread(c);
 					break;
 				}
 			}
 
-			if(isDigit(var)) return new LexicalUnit(type, new ValueImpl(var));
-			else if(isSymbol(var)) return new LexicalUnit(reserved.get(var), new ValueImpl(var));
-			else if (isVarName(var)) return  new LexicalUnit(LexicalType.NAME, new ValueImpl(var));
-			else continue;
+			if(isDigit(var)) {
+				peek_deque.add(new LexicalUnit(type, new ValueImpl(var)));
+				return new LexicalUnit(type, new ValueImpl(var));
+			} else if(isSymbol(var)) {
+				peek_deque.add(new LexicalUnit(reserved.get(var), new ValueImpl(var)));
+				return new LexicalUnit(reserved.get(var), new ValueImpl(var));
+			} else if (isVarName(var)) {
+				peek_deque.add(new LexicalUnit(LexicalType.NAME, new ValueImpl(var)));
+				return  new LexicalUnit(LexicalType.NAME, new ValueImpl(var));
+			} else continue;
 		}
 	}
 
@@ -91,12 +109,16 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 		String literal = "";
 		while (true) {
 			int count = pr.read();
-			if (count < 0) return new LexicalUnit(LexicalType.EOF);
+			if (count < 0) {
+				peek_deque.add(new LexicalUnit(LexicalType.EOF));
+				return new LexicalUnit(LexicalType.EOF);
+			}
 			char c = (char) count;
 			if (c == '"') break;
 			literal +=   c;
 		}
 
+		peek_deque.add(new LexicalUnit(LexicalType.LITERAL, new ValueImpl(literal)));
 		return new LexicalUnit(LexicalType.LITERAL, new ValueImpl(literal));
 	}
 
@@ -126,21 +148,49 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 		return Pattern.compile("^[<=>]+$").matcher(str).matches();
 	}
 
+	private boolean isFourOperation(String str) {
+		return Pattern.compile("^[\\+\\-\\*\\/]+$").matcher(str).matches();
+	}
+
 	public boolean isSpace(char ch) {
 		if (ch == ' ') return true;
 		return false;
 	}
 
 	@Override
-	public LexicalUnit peek() throws Exception {
-		return get();
+	public LexicalUnit get() throws Exception {
+		if (peek_deque.peek() == null) {
+			feed();
+		}
+		LexicalUnit lu = peek_deque.poll();
+		return lu;
+	}
 
+	@Override
+	public LexicalUnit peek() throws Exception {
+		LexicalUnit lu = null;
+		if (peek_deque.peek() == null) {
+			lu = feed();
+		} else {
+			lu = peek_deque.peek();
+		}
+		return lu;
 	}
 
 	@Override
 	public LexicalUnit peek2() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		LexicalUnit lu;
+		if (peek_deque.peek() == null) {
+			lu = feed();
+		} else {
+			LexicalUnit temp = peek_deque.poll();
+			if (peek_deque.peek() == null) {
+				lu = feed();
+			}
+			lu = peek_deque.peek();
+			peek_deque.addFirst(temp);
+		}
+		return lu;
 	}
 
 }

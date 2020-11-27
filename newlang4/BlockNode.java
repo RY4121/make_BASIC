@@ -1,6 +1,5 @@
 package newlang4;
 
-// 完成
 public class BlockNode extends Node {
 	Node body;
 
@@ -10,8 +9,12 @@ public class BlockNode extends Node {
 
 	@Override
 	public void parse() throws Exception {
+		System.out.println("call BlockNode#parse()\t" + peek());
 		body = peek_handle(Symbol.loop);
-		if (body != null) return;
+		if (body != null) {
+			return;
+		}
+		expect(LexicalType.IF);
 		body = handle(Symbol.if_prefix);
 	}
 

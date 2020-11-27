@@ -132,12 +132,14 @@ public enum Symbol {
 	}
 
 	public boolean isFirst(LexicalType type) {
+//		System.out.println(first);
 		return first.contains(type);
 	}
 
 	public Node handle(Environment env) throws Exception {
+		System.out.println("call Symbol#handle()");
 		Node instance = (Node) constructor.newInstance(env);
-		System.out.println(instance);
+//		if (instance != null) System.out.println(instance);
 		instance.parse();
 		return instance;
 	}
