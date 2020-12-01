@@ -1,7 +1,7 @@
 package newlang4;
 
 public class ExpressionNode extends Node {
-	Node body;
+	Node elm;
 
 	public ExpressionNode(Environment env) {
 		super(env);
@@ -9,35 +9,22 @@ public class ExpressionNode extends Node {
 
 	@Override
 	public void parse() throws Exception {
-		System.out.println("call ExpressionNode#parse()");
-		// <expr> <ADD> <expr> | <expr> <SUB> <expr> | <expr> <MUL> <expr> | <expr><DIV> <expr> |
-		// <SUB> <expr> | <LP> <expr> <RP> |
-		// <var> | <INTVAL> | <DOUBLEVAL> | <LITERAL> | <call_func>
+		int lp_cnt = 0;
 		while (true) {
 			LexicalType ft = peek().getType();
-			System.out.println("\tEN#ft\t" + peek());
+
 			if (ft == LexicalType.END) {
 				break;
 			} else if (see(LexicalType.SUB)) {
 				continue;
 			} else if (see(LexicalType.LP)) {
+				lp_cnt++;
 				continue;
 			}
 
-			Node elm = peek_handle(Symbol.constant);
+			elm = peek_handle(Symbol.constant);
 
-			if (elm != null)
-				continue;
-//			if (see(LexicalType.NL))
-//				continue;
-			if (see(LexicalType.RP))
-				continue;
-
-			elm = peek_handle(Symbol.var);
-			if (elm == null) {
-				elm = peek_handle(Symbol.call_func);
-			} else {
-				sub_nodes.add(elm);
+			if (elm != null) {
 				continue;
 			}
 
@@ -46,13 +33,28 @@ public class ExpressionNode extends Node {
 				case SUB:
 				case MUL:
 				case DIV:
-					 System.out.println("EN#演算子" + ft);
-					see(ft);
+					expect(ft);
 					continue;
-				default:
-					System.out.println("\tEN#default#\t" + ft);
+				case RP:
+					if (lp_cnt > 0) {
+						lp_cnt--;
+						expect(ft);
+						continue;
+					}
 					break;
-				// error();
+				default:
+					break;
+			}
+
+			LexicalType ft2 = peek2().getType();
+			if (ft2 == LexicalType.LP && ft == LexicalType.NAME) {
+				elm = peek_handle(Symbol.call_func);
+				continue;
+			}
+
+			elm = peek_handle(Symbol.var);
+			if (elm != null) {
+				continue;
 			}
 
 			break;
@@ -61,6 +63,6 @@ public class ExpressionNode extends Node {
 
 	@Override
 	public String toString() {
-		return body.toString();
+		return "expr";
 	}
 }

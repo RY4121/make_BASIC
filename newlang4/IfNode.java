@@ -1,6 +1,7 @@
 package newlang4;
 
 public class IfNode extends Node {
+	Node body;
 
 	public IfNode(Environment env) {
 		super(env);
@@ -8,87 +9,42 @@ public class IfNode extends Node {
 
 	@Override
 	public void parse() throws Exception {
-		System.out.println("call IfNode#parse()\t" + peek());
-		if (see(LexicalType.IF)) {
-			System.out.println("****************\t" + peek());
-			return;
-		}
-		handle(Symbol.cond);
+		expect(LexicalType.IF);
+		body = handle(Symbol.cond);
 		expect(LexicalType.THEN);
-//		expect(LexicalType.EQ);
-		System.out.println("\t\tGGGGG");
 		Node elm = peek_handle(Symbol.stmt);
 		if (elm == null) {
-			// pattern3
-			// <if_prefix> <NL> <stmt_list> <else_block> <ENDIF> <NL>
+			// pattern3 or 4 or 5 or 6
 			expect(LexicalType.NL);
 			handle(Symbol.stmt_list);
-			System.out.println("ここまではね");
 
-			LexicalType ft = peek().getType();
-			System.out.println("DEBUG\t" + ft);
-			if(ft == LexicalType.ENDIF) {
-				System.out.println("Pattern3");
-			} else {
+			if (see(LexicalType.ELSE)) { // pattern5
+				expect(LexicalType.NL);
+				body = handle(Symbol.stmt_list);
+			} else if (see(LexicalType.ELSEIF)) {
+				// pattern4 or 6
+				handle(Symbol.cond);
+				expect(LexicalType.THEN);
+				expect(LexicalType.NL);
+				body = handle(Symbol.stmt_list);
 
-
-//			if (ft != null) {
-				// pattern4 or 5 or 6
-				/* Symbol.else_if_block */
-				if (ft == LexicalType.ELSE) {
-					// pattern5
-					System.out.println("Pattern5");
-					expect(LexicalType.ELSE);
+				if (see(LexicalType.ELSE)) { // pattern6
 					expect(LexicalType.NL);
-					handle(Symbol.stmt_list);
-				} else {
-					// pattern4 or 6
-					System.out.println("Pattern4 or 6");
-					peek_handle(Symbol.else_if_prefix);
-					expect(LexicalType.ELSEIF);
-					handle(Symbol.cond);
-					expect(LexicalType.THEN);
-					expect(LexicalType.NL);
-					handle(Symbol.stmt_list);
-
-					ft = peek().getType();
-					if (ft != LexicalType.ELSE) {
-						System.out.println("PATTERN4");
-						return;
-					} else {
-						System.out.println("PATTERN6");
-						expect(LexicalType.ELSE);
-						expect(LexicalType.NL);
-						handle(Symbol.stmt_list);
-					}
+					body = handle(Symbol.stmt_list);
 				}
 			}
-//			} else {
-				// pattern3
-//				System.out.println("Pattern3");
-//			}
-			/* END */
 			expect(LexicalType.ENDIF);
-			expect(LexicalType.NL);
 		} else {
 			// pattern1 or 2
-			LexicalType ft = peek().getType();
-			System.out.println("HERE" + peek());
-//			expect(LexicalType.NL);
-
-			if (see(LexicalType.NL)) {
-				// pattern1
-				System.out.println("PATTERN1");
-				return;
-			} else {
-				// pattern2
-				System.out.println("PATTERN2");
-				expect(LexicalType.ELSE);
-				handle(Symbol.stmt);
-				expect(LexicalType.NL);
+			if (see(LexicalType.ELSE)) { // pattern2
+				body = handle(Symbol.stmt);
 			}
+			expect(LexicalType.NL);
 		}
+	}
 
-		// System.out.println("&&&\t" + ft);
+	@Override
+	public String toString() {
+		return String.format("[%s]", body.toString());
 	}
 }

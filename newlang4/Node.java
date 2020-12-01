@@ -1,15 +1,11 @@
 package newlang4;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Node {
 	Environment env;
-	protected List<Node> sub_nodes = new ArrayList<>();
-
-	/** Creates a new instance of Node */
-	public Node() {
-	}
+	protected static Queue<Node> sub_Nodes = new LinkedList<>();
 
 	public Node(Environment env) {
 		this.env = env;
@@ -35,22 +31,22 @@ public class Node {
 	}
 
 	protected Node handle(Symbol symbol) throws Exception {
-		System.out.println();
-		System.out.println("Node#handle()#symbol\t" + symbol);
 		LexicalUnit f = peek();
-		System.out.println("Node#handle()#f\t" + f + "\t" + f.getType());
 		if (symbol.isFirst(f.getType())) {
-			return symbol.handle(env);
+			Node body = symbol.handle(env);
+			sub_Nodes.add(body);
+			return body;
 		}
 		error();
 		return null;
 	}
 
 	protected Node peek_handle(Symbol symbol) throws Exception {
-		System.out.println("call Node#peek_handle()\t" + peek());
 		LexicalUnit f = peek();
 		if (symbol.isFirst(f.getType())) {
-			return symbol.handle(env);
+			Node body = symbol.handle(env);
+			sub_Nodes.add(body);
+			return body;
 		}
 		return null;
 	}
@@ -64,11 +60,13 @@ public class Node {
 	}
 
 	protected void expect(LexicalType t) throws Exception {
-		if (get().getType() != t) error();
+		if (get().getType() != t)
+			error();
 	}
 
 	protected void check(LexicalType t) throws Exception {
-		if (peek().getType() != t) error();
+		if (peek().getType() != t)
+			error();
 	}
 
 	static void error() throws Exception {
@@ -80,7 +78,17 @@ public class Node {
 	}
 
 	public String toString() {
-		return "Node";
+		StringBuffer sb = new StringBuffer();
+		return showResults(sb);
 	}
 
+	private String showResults(StringBuffer sb) {
+		while (sub_Nodes.peek() != null) {
+			Node e = sub_Nodes.poll();
+			sb.append("[");
+			sb.append(e.getClass().getSimpleName() + "," + e);
+			sb.append("]\n");
+		}
+		return sb.substring(0);
+	}
 }

@@ -1,6 +1,5 @@
 package newlang4;
 
-// 完成
 public class ProgramNode extends Node {
 	Node body;
 
@@ -9,8 +8,7 @@ public class ProgramNode extends Node {
 	}
 
 	@Override
-	public void parse( ) throws Exception {
-		System.out.println("call ProgramNode#parse()");
+	public void parse() throws Exception {
 		body = handle(Symbol.stmt_list);
 	}
 

@@ -1,6 +1,5 @@
 package newlang4;
 
-// Exprの並び
 public class ExprListNode extends Node {
 	Node body;
 
@@ -10,17 +9,20 @@ public class ExprListNode extends Node {
 
 	@Override
 	public void parse() throws Exception {
-		System.out.println("call ExpressionNode#parse()");
 		while (true) {
-
-			body = peek_handle(Symbol.expr);
-
+			Node elm = peek_handle(Symbol.expr);
+			if (elm != null) {
+				body = elm;
+			}
 			if (see(LexicalType.COMMA)) {
 				continue;
 			}
-
 			break;
 		}
 	}
-}
 
+	@Override
+	public String toString() {
+		return String.format("[%s]", body.toString());
+	}
+}

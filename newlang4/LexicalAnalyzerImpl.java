@@ -16,7 +16,6 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 	private Deque<LexicalUnit> peek_deque;
 
 	public LexicalAnalyzerImpl(InputStream in) {
-		System.out.println("LexicalAnalyzerImpl#Constructor");
 		pr = new PushbackReader(new InputStreamReader(in));
 		reserved = new HashMap<>();
 		for (LexicalType type : LexicalType.values()) {
@@ -27,7 +26,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
 	public LexicalUnit feed() throws Exception {
 		LexicalType type;
-		while(true) {
+		while (true) {
 			String var = "";
 			boolean asSymbol = false;
 			boolean doubleSymbol = false;
@@ -37,12 +36,16 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 			if (count < 0 || count == 65535) {
 				peek_deque.add(new LexicalUnit(LexicalType.EOF));
 				return new LexicalUnit(LexicalType.EOF);
-			}
-			else c = (char) count;
-			if (isSpace(c)) continue;
-			if (c == '"') return handleLiteral();
-			if (isSymbol(String.valueOf(c))) asSymbol = true;
-			if (isContinuousSymbol(String.valueOf(c))) doubleSymbol = true;
+			} else
+				c = (char) count;
+			if (isSpace(c))
+				continue;
+			if (c == '"')
+				return handleLiteral();
+			if (isSymbol(String.valueOf(c)))
+				asSymbol = true;
+			if (isContinuousSymbol(String.valueOf(c)))
+				doubleSymbol = true;
 
 			while (true) {
 				var += c;
@@ -50,12 +53,14 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
 				if (c == '.') {
 					LexicalUnit tempLU = handleDoubleNum();
-					var += '.'+tempLU.getValue().getSValue();
+					var += '.' + tempLU.getValue().getSValue();
 					peek_deque.add(new LexicalUnit(tempLU.getType(), new ValueImpl(var)));
 					return new LexicalUnit(tempLU.getType(), new ValueImpl(var));
-				} else type = LexicalType.INTVAL;
+				} else
+					type = LexicalType.INTVAL;
 
-				if (isSpace(c)) break;
+				if (isSpace(c))
+					break;
 				if (asSymbol && isDigitOrAlpha(String.valueOf(c))) {
 					pr.unread(c);
 					break;
@@ -67,28 +72,29 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 						} else {
 							pr.unread(c);
 						}
-					}
-					else pr.unread(c);
+					} else
+						pr.unread(c);
 					break;
 				}
 			}
 
-			if(isDigit(var)) {
+			if (isDigit(var)) {
 				peek_deque.add(new LexicalUnit(type, new ValueImpl(var)));
 				return new LexicalUnit(type, new ValueImpl(var));
-			} else if(isSymbol(var)) {
+			} else if (isSymbol(var)) {
 				peek_deque.add(new LexicalUnit(reserved.get(var), new ValueImpl(var)));
 				return new LexicalUnit(reserved.get(var), new ValueImpl(var));
 			} else if (isVarName(var)) {
 				peek_deque.add(new LexicalUnit(LexicalType.NAME, new ValueImpl(var)));
-				return  new LexicalUnit(LexicalType.NAME, new ValueImpl(var));
-			} else continue;
+				return new LexicalUnit(LexicalType.NAME, new ValueImpl(var));
+			} else
+				continue;
 		}
 	}
 
 	public LexicalUnit handleDoubleNum() throws IOException {
 		String doubleVal = "";
-		while(true) {
+		while (true) {
 			int count = pr.read();
 			if (count < 0) {
 				pr.unread(count);
@@ -114,8 +120,9 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 				return new LexicalUnit(LexicalType.EOF);
 			}
 			char c = (char) count;
-			if (c == '"') break;
-			literal +=   c;
+			if (c == '"')
+				break;
+			literal += c;
 		}
 
 		peek_deque.add(new LexicalUnit(LexicalType.LITERAL, new ValueImpl(literal)));
@@ -131,7 +138,8 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 	}
 
 	public boolean isBreakLine(char ch) {
-		if (ch == '\n') return true;
+		if (ch == '\n')
+			return true;
 		return false;
 	}
 
@@ -140,7 +148,8 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 	}
 
 	private boolean isSymbol(String str) throws IOException {
-		if (reserved.containsKey(str)) return true;
+		if (reserved.containsKey(str))
+			return true;
 		return false;
 	}
 
@@ -153,7 +162,8 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 	}
 
 	public boolean isSpace(char ch) {
-		if (ch == ' ') return true;
+		if (ch == ' ')
+			return true;
 		return false;
 	}
 

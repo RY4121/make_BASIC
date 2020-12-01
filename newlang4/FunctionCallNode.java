@@ -1,6 +1,7 @@
 package newlang4;
 
 public class FunctionCallNode extends Node {
+	Node body;
 
 	public FunctionCallNode(Environment env) {
 		super(env);
@@ -8,11 +9,14 @@ public class FunctionCallNode extends Node {
 
 	@Override
 	public void parse() throws Exception {
-		System.out.println("call FuctionCallNode#parse()\t");
-
 		expect(LexicalType.NAME);
 		expect(LexicalType.LP);
-		handle(Symbol.expr_list);
+		body = handle(Symbol.expr_list);
 		expect(LexicalType.RP);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("[%s]", body.toString());
 	}
 }

@@ -8,11 +8,14 @@ public class VariableNode extends Node {
 	}
 
 	@Override
-	public void parse() throws Exception{
-		System.out.println("call Variable#parse()");
+	public void parse() throws Exception {
 		LexicalUnit elm = get();
-		System.out.println(elm);
-		System.out.println("\t\t VN終わり");
+		value = elm.getValue();
 		return;
+	}
+
+	@Override
+	public String toString() {
+		return value.getSValue();
 	}
 }

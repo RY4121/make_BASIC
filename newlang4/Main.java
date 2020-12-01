@@ -8,16 +8,10 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		InputStream in = new FileInputStream("test1.bas");
 		newlang4.LexicalAnalyzer lex = new newlang4.LexicalAnalyzerImpl(in);
-//		Environment env = new Environment(lex);
-//
-//		Node p = Symbol.program.handle(env);
-//		System.out.println(p);
+		Environment env = new Environment(lex);
 
-		while (true) {
-			LexicalUnit unit = lex.get();
-			System.out.println(unit);
-			if (unit.getType() == LexicalType.EOF) break;
-		}
+		Node p = Symbol.program.handle(env);
+		System.out.println(p);
 	}
 
 }
