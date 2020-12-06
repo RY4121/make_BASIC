@@ -117,6 +117,14 @@ public enum Symbol {
 			LexicalType.LITERAL
 		),
 		ConstantNode.class),
+	binaryOp(
+		EnumSet.of(
+			LexicalType.NAME,
+			LexicalType.INTVAL,
+			LexicalType.DOUBLEVAL,
+			LexicalType.LITERAL
+		),
+		BinaryOperatorNode.class),
 	;
 	Set<LexicalType> first;
 	Class<? extends Node> handler;

@@ -5,10 +5,13 @@ import java.util.Queue;
 
 public class Node {
 	Environment env;
-	protected static Queue<Node> sub_Nodes = new LinkedList<>();
+	protected Queue<Node> sub_Nodes;
+	protected Queue<LexicalUnit> terminal;
 
 	public Node(Environment env) {
 		this.env = env;
+		sub_Nodes = new LinkedList<>();
+		terminal = new LinkedList<>();
 	}
 
 	public void parse() throws Exception {
@@ -19,7 +22,9 @@ public class Node {
 	}
 
 	protected LexicalUnit get() throws Exception {
-		return env.getInput().get();
+		LexicalUnit lu = env.getInput().get();
+		terminal.add(lu);
+		return lu;
 	}
 
 	protected LexicalUnit peek() throws Exception {
@@ -78,17 +83,23 @@ public class Node {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		return showResults(sb);
+		StringBuilder sb = new StringBuilder();
+		return showResults(sb, 0).toString();
 	}
 
-	private String showResults(StringBuffer sb) {
-		while (sub_Nodes.peek() != null) {
-			Node e = sub_Nodes.poll();
-			sb.append("[");
-			sb.append(e.getClass().getSimpleName() + "," + e);
-			sb.append("]\n");
+	private StringBuilder showResults(StringBuilder sb, int space) {
+		for (Node node : sub_Nodes) {
+			sb.append("\t".repeat(space)).append(node.getClass().getSimpleName()).append("\n");
+			sb.append("\t".repeat(space)).append(node.terminal).append("\n");
+			node.showResults(sb, ++space);
 		}
-		return sb.substring(0);
+		return sb;
+		// while (sub_Nodes.peek() != null) {
+		// Node e = sub_Nodes.poll();
+		// sb.append("[");
+		// sb.append(e.getClass().getSimpleName() + "," + e);
+		// sb.append("]\n");
+		// }
+		// return sb.substring(0);
 	}
 }

@@ -11,7 +11,7 @@ public class AssignmentNode extends Node {
 	public void parse() throws Exception {
 		body = handle(Symbol.leftvar);
 		expect(LexicalType.EQ);
-		body = handle(Symbol.expr_list);
+		body = handle(Symbol.expr);
 	}
 
 	@Override
