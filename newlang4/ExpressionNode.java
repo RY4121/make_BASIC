@@ -121,7 +121,10 @@ public class ExpressionNode extends Node {
 		while (op_stack.peek() != null) {
 			stack.addFirst(op_stack.poll());
 		}
-		ArrayDeque<String> _stack = stack.clone();
+		ArrayDeque<String> _stack = new ArrayDeque<>();
+		while (stack.peek() != null) {
+			_stack.addLast(stack.pollLast());
+		}
 		if (!_stack.isEmpty() && assFlg) {
 			polish_list.add(_stack);
 		}

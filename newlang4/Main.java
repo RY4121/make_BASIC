@@ -6,7 +6,7 @@ import java.io.InputStream;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		InputStream in = new FileInputStream("temp.bas");
+		InputStream in = new FileInputStream("test4.bas");
 		LexicalAnalyzer lex = new LexicalAnalyzerImpl(in);
 		Environment env = new Environment(lex);
 
