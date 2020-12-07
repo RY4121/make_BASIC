@@ -1,7 +1,15 @@
 package newlang4;
 
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
+
 public class ExpressionNode extends Node {
 	Node elm;
+	private static ArrayDeque<String> stack = new ArrayDeque<>();
+	private static ArrayDeque<String> op_stack = new ArrayDeque<>();
+	private static boolean funcFlg = false;
+	private Map<String, Integer> op_map;
 
 	public ExpressionNode(Environment env) {
 		super(env);
@@ -10,25 +18,58 @@ public class ExpressionNode extends Node {
 	@Override
 	public void parse() throws Exception {
 		int lp_cnt = 0;
+
+		op_map = new HashMap<String, Integer>();
+		op_map.put("(", 0);
+		op_map.put(")", 0);
+		op_map.put("+", 1);
+		op_map.put("-", 1);
+		op_map.put("*", 2);
+		op_map.put("/", 2);
+
 		while (true) {
 			LexicalType ft = peek().getType();
 			LexicalType ft2 = peek2().getType();
-			System.out.println("EN\t" + peek());
+			String sValue = peek().getValue().getSValue();
 
-			peek_handle(Symbol.binaryOp);
+			switch (ft2) {
+				case ADD:
+				case SUB:
+				case MUL:
+				case DIV:
+					peek_handle(Symbol.binaryOp);
+					break;
+				default:
+					break;
+			}
+			if (funcFlg) {
+				ft = peek().getType();
+				String tempStr = stack.poll();
+				stack.addFirst("(");
+				stack.addFirst(tempStr);
+				op_stack.addFirst("(");
+				funcFlg = false;
+			}
 
 			if (ft == LexicalType.END) {
 				break;
 			} else if (see(LexicalType.SUB)) {
+				handleFourSymbol(sValue);
 				continue;
 			} else if (see(LexicalType.LP)) {
 				lp_cnt++;
+				op_stack.addFirst(sValue);
 				continue;
+			} else if (ft == LexicalType.NL) {
+				break;
+			} else if (ft == LexicalType.COMMA) {
+				return;
 			}
 
 			elm = peek_handle(Symbol.constant);
 
 			if (elm != null) {
+				stack.addFirst(sValue);
 				continue;
 			}
 
@@ -37,9 +78,21 @@ public class ExpressionNode extends Node {
 				case SUB:
 				case MUL:
 				case DIV:
+					handleFourSymbol(sValue);
 					expect(ft);
 					continue;
 				case RP:
+					if (op_stack.isEmpty()) {
+						break;
+					}
+					while (!op_stack.peek().equals("(")) {
+						stack.addFirst(op_stack.poll());
+						if (op_stack.peek() == null) {
+							break;
+						}
+					}
+					op_stack.poll();
+
 					if (lp_cnt > 0) {
 						lp_cnt--;
 						expect(ft);
@@ -47,6 +100,7 @@ public class ExpressionNode extends Node {
 					}
 					break;
 				default:
+					stack.addFirst(sValue);
 					break;
 			}
 
@@ -61,22 +115,35 @@ public class ExpressionNode extends Node {
 				continue;
 			}
 
-			if (ft == LexicalType.COMMA) {
-				return;
-			}
 			break;
 		}
 
-		System.out.println("\t\t\t入りました" + peek());
-		while (BinaryOperatorNode.op_stack.peek() != null) {
-			BinaryOperatorNode.stack.addFirst(BinaryOperatorNode.op_stack.poll());
+		while (op_stack.peek() != null) {
+			stack.addFirst(op_stack.poll());
 		}
-		// System.out.println("sayaka\t" + terminal);
-		System.out.println("BON_op\t" + BinaryOperatorNode.op_stack);
-		System.out.println("BON_stack\t" + BinaryOperatorNode.stack);
-		bQueue.add(BinaryOperatorNode.stack);
-		System.out.println(bQueue);
-		// BinaryOperatorNode.stack.clear();
+		ArrayDeque<String> _stack = stack.clone();
+		if (!_stack.isEmpty() && assFlg) {
+			polish_list.add(_stack);
+		}
+		assFlg = false;
+		stack.clear();
+	}
+
+	private void handleFourSymbol(String sValue) {
+		if (op_stack.peek() == null) {
+			op_stack.addFirst(sValue);
+		}
+		if (op_map.get(sValue) > op_map.get(op_stack.peek())) {
+			op_stack.addFirst(sValue);
+		} else {
+			while (op_map.get(sValue) < op_map.get(op_stack.peek())) {
+				stack.addFirst(op_stack.poll());
+				if (op_stack.peek() == null) {
+					op_stack.addFirst(sValue);
+					break;
+				}
+			}
+		}
 	}
 
 	@Override

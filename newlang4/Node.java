@@ -1,6 +1,6 @@
 package newlang4;
 
-import java.util.Deque;
+import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -9,15 +9,13 @@ public class Node {
 	Environment env;
 	protected Queue<Node> sub_Nodes;
 	protected Queue<LexicalUnit> terminal;
-	protected static List<Deque> bQueue = new LinkedList<>();
-	// protected List<Deque> bQueue;
-	protected static boolean funcFlg = false;
+	protected static List<ArrayDeque> polish_list = new LinkedList<>();
+	protected static boolean assFlg = false;
 
 	public Node(Environment env) {
 		this.env = env;
 		sub_Nodes = new LinkedList<>();
 		terminal = new LinkedList<>();
-		// bQueue = new LinkedList<>();
 	}
 
 	public void parse() throws Exception {
@@ -95,10 +93,8 @@ public class Node {
 
 	private StringBuilder showResults(StringBuilder sb, int space) {
 		for (Node node : sub_Nodes) {
-			sb.append("\t".repeat(space)).append(node.getClass().getSimpleName()).append("\n");
-			sb.append("\t".repeat(space)).append(node.terminal).append("\n");
-			// sb.append(node.getClass().getSimpleName()).append("\n");
-			// sb.append(node.terminal).append("\n");
+			sb.append(" ".repeat(space)).append(node.getClass().getSimpleName()).append("\n");
+			sb.append(" ".repeat(space)).append(node.terminal).append("\n");
 			node.showResults(sb, ++space);
 		}
 		return sb;

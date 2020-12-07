@@ -13,9 +13,4 @@ public class VariableNode extends Node {
 		value = elm.getValue();
 		return;
 	}
-
-	@Override
-	public String toString() {
-		return value.getSValue();
-	}
 }

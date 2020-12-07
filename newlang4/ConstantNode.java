@@ -20,9 +20,4 @@ public class ConstantNode extends Node {
 				error("syntax error");
 		}
 	}
-
-	@Override
-	public String toString() {
-		return String.format("[%s]", value.getSValue());
-	}
 }

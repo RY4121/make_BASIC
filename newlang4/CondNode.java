@@ -27,9 +27,4 @@ public class CondNode extends Node {
 
 		handle(Symbol.expr);
 	}
-
-	@Override
-	public String toString() {
-		return ft.toString();
-	}
 }

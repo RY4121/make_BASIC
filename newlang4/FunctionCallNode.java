@@ -14,9 +14,4 @@ public class FunctionCallNode extends Node {
 		body = handle(Symbol.expr_list);
 		expect(LexicalType.RP);
 	}
-
-	@Override
-	public String toString() {
-		return String.format("[%s]", body.toString());
-	}
 }

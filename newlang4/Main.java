@@ -12,11 +12,6 @@ public class Main {
 
 		Node p = Symbol.program.handle(env);
 		System.out.println(p);
-		// BinaryOperatorNode bp = new BinaryOperatorNode(env);
-		// while (bp.op_stack.peek() != null) {
-		// bp.stack.addFirst(bp.op_stack.poll());
-		// }
-		System.out.println("HERE");
-		System.out.println(p.bQueue);
+		System.out.println(p.polish_list);
 	}
 }

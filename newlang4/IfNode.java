@@ -42,9 +42,4 @@ public class IfNode extends Node {
 			expect(LexicalType.NL);
 		}
 	}
-
-	@Override
-	public String toString() {
-		return String.format("[%s]", body.toString());
-	}
 }

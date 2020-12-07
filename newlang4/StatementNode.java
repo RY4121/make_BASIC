@@ -32,9 +32,4 @@ public class StatementNode extends Node {
 			body = handle(Symbol.call_func);
 		}
 	}
-
-	@Override
-	public String toString() {
-		return String.format("[%s]", body.toString());
-	}
 }
