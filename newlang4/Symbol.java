@@ -122,9 +122,15 @@ public enum Symbol {
 			LexicalType.NAME,
 			LexicalType.INTVAL,
 			LexicalType.DOUBLEVAL,
-			LexicalType.LITERAL
+			LexicalType.LITERAL,
+			LexicalType.ADD,
+			LexicalType.SUB,
+			LexicalType.MUL,
+			LexicalType.DIV,
+			LexicalType.LP,
+			LexicalType.RP
 		),
-		BinaryOperatorNode.class),
+		BinaryOperatorNode.class)
 	;
 	Set<LexicalType> first;
 	Class<? extends Node> handler;

@@ -191,15 +191,11 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 	public LexicalUnit peek2() throws Exception {
 		LexicalUnit lu;
 		if (peek_deque.peek() == null) {
-			System.out.println("\t\tERROR\t\t\tcall peek2()");
 			lu = feed();
 			peek2();
 		} else {
 			LexicalUnit temp = peek_deque.poll();
-			if (peek_deque.peek() == null) {
-				lu = feed();
-			}
-			lu = peek_deque.peek();
+			lu = peek();
 			peek_deque.addFirst(temp);
 		}
 		return lu;

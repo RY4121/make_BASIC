@@ -12,6 +12,10 @@ public class ExpressionNode extends Node {
 		int lp_cnt = 0;
 		while (true) {
 			LexicalType ft = peek().getType();
+			LexicalType ft2 = peek2().getType();
+			System.out.println("EN\t" + peek());
+
+			peek_handle(Symbol.binaryOp);
 
 			if (ft == LexicalType.END) {
 				break;
@@ -46,8 +50,8 @@ public class ExpressionNode extends Node {
 					break;
 			}
 
-			LexicalType ft2 = peek2().getType();
 			if (ft2 == LexicalType.LP && ft == LexicalType.NAME) {
+				funcFlg = true;
 				elm = peek_handle(Symbol.call_func);
 				continue;
 			}
@@ -57,8 +61,22 @@ public class ExpressionNode extends Node {
 				continue;
 			}
 
+			if (ft == LexicalType.COMMA) {
+				return;
+			}
 			break;
 		}
+
+		System.out.println("\t\t\t入りました" + peek());
+		while (BinaryOperatorNode.op_stack.peek() != null) {
+			BinaryOperatorNode.stack.addFirst(BinaryOperatorNode.op_stack.poll());
+		}
+		// System.out.println("sayaka\t" + terminal);
+		System.out.println("BON_op\t" + BinaryOperatorNode.op_stack);
+		System.out.println("BON_stack\t" + BinaryOperatorNode.stack);
+		bQueue.add(BinaryOperatorNode.stack);
+		System.out.println(bQueue);
+		// BinaryOperatorNode.stack.clear();
 	}
 
 	@Override
