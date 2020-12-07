@@ -20,9 +20,4 @@ public class ExprListNode extends Node {
 			break;
 		}
 	}
-
-	@Override
-	public String toString() {
-		return String.format("[%s]", body.toString());
-	}
 }

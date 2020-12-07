@@ -1,7 +1,6 @@
 package newlang4;
 
 public class StatementNode extends Node {
-	Node body;
 
 	public StatementNode(Environment env) {
 		super(env);
@@ -14,12 +13,11 @@ public class StatementNode extends Node {
 			return;
 		} else if (ft == LexicalType.FOR) {
 			expect(LexicalType.FOR);
-			body = handle(Symbol.subst);
+			handle(Symbol.subst);
 			expect(LexicalType.TO);
 			expect(LexicalType.INTVAL);
 			expect(LexicalType.NL);
-			body = handle(Symbol.stmt_list);
-			// expect(LexicalType.NL);
+			handle(Symbol.stmt_list);
 			expect(LexicalType.NEXT);
 			expect(LexicalType.NAME);
 			return;
@@ -27,9 +25,9 @@ public class StatementNode extends Node {
 
 		ft = peek2().getType();
 		if (ft == LexicalType.EQ) {
-			body = handle(Symbol.subst);
+			handle(Symbol.subst);
 		} else if (ft == LexicalType.LP) {
-			body = handle(Symbol.call_func);
+			handle(Symbol.call_func);
 		}
 	}
 }

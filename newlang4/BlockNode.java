@@ -13,6 +13,6 @@ public class BlockNode extends Node {
 		if (body != null) {
 			return;
 		}
-		body = handle(Symbol.if_prefix);
+		handle(Symbol.if_prefix);
 	}
 }

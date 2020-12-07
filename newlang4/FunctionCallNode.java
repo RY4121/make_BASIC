@@ -1,7 +1,6 @@
 package newlang4;
 
 public class FunctionCallNode extends Node {
-	Node body;
 
 	public FunctionCallNode(Environment env) {
 		super(env);
@@ -11,7 +10,7 @@ public class FunctionCallNode extends Node {
 	public void parse() throws Exception {
 		expect(LexicalType.NAME);
 		expect(LexicalType.LP);
-		body = handle(Symbol.expr_list);
+		handle(Symbol.expr_list);
 		expect(LexicalType.RP);
 	}
 }

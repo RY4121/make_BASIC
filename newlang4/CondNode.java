@@ -1,8 +1,6 @@
 package newlang4;
 
 public class CondNode extends Node {
-	Node body;
-	LexicalType ft;
 
 	public CondNode(Environment env) {
 		super(env);
@@ -11,7 +9,7 @@ public class CondNode extends Node {
 	@Override
 	public void parse() throws Exception {
 		handle(Symbol.expr);
-		ft = peek().getType();
+		LexicalType ft = peek().getType();
 		switch (ft) {
 			case EQ:
 			case GT:

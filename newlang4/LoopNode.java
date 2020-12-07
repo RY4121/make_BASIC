@@ -1,7 +1,6 @@
 package newlang4;
 
 public class LoopNode extends Node {
-	Node body;
 
 	public LoopNode(Environment env) {
 		super(env);
@@ -10,9 +9,9 @@ public class LoopNode extends Node {
 	@Override
 	public void parse() throws Exception {
 		if (see(LexicalType.WHILE)) {
-			body = handle(Symbol.cond);
+			handle(Symbol.cond);
 			expect(LexicalType.NL);
-			body = handle(Symbol.stmt_list);
+			handle(Symbol.stmt_list);
 			expect(LexicalType.WEND);
 			expect(LexicalType.NL);
 			return;
@@ -25,7 +24,7 @@ public class LoopNode extends Node {
 				expect(LexicalType.UNTIL);
 				handle(Symbol.cond);
 				expect(LexicalType.NL);
-				body = handle(Symbol.stmt_list);
+				handle(Symbol.stmt_list);
 				expect(LexicalType.LOOP);
 				expect(LexicalType.NL);
 				return;
@@ -34,7 +33,7 @@ public class LoopNode extends Node {
 				expect(LexicalType.WHILE);
 				handle(Symbol.cond);
 				expect(LexicalType.NL);
-				body = handle(Symbol.stmt_list);
+				handle(Symbol.stmt_list);
 				expect(LexicalType.LOOP);
 				expect(LexicalType.NL);
 				return;
@@ -46,16 +45,11 @@ public class LoopNode extends Node {
 				if (!see(LexicalType.WHILE)) {
 					expect(LexicalType.UNTIL);
 				}
-				body = handle(Symbol.cond);
+				handle(Symbol.cond);
 				expect(LexicalType.NL);
 				return;
 			default:
 				error("syntax error");
 		}
-	}
-
-	@Override
-	public String toString() {
-		return String.format("[%s]", body.toString());
 	}
 }
