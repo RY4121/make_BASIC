@@ -1,4 +1,4 @@
-package newlang4;
+package newlang5;
 
 public class ProgramNode extends Node {
 	Node body;

@@ -1,4 +1,4 @@
-package newlang4;
+package newlang5;
 
 public class BinaryOperatorNode extends Node {
 

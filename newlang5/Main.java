@@ -1,4 +1,4 @@
-package newlang4;
+package newlang5;
 
 import java.io.FileInputStream;
 import java.io.InputStream;

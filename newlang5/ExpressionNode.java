@@ -1,4 +1,4 @@
-package newlang4;
+package newlang5;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
@@ -31,25 +31,17 @@ public class ExpressionNode extends Node {
 			LexicalType ft = peek().getType();
 			LexicalType ft2 = peek2().getType();
 			String sValue = peek().getValue().getSValue();
-//			System.out.println("\t\t" + ft);
 
 			switch (ft2) {
 				case ADD:
 				case SUB:
 				case MUL:
 				case DIV:
-					elm = peek_handle(Symbol.binaryOp);
+					peek_handle(Symbol.binaryOp);
 					break;
 				default:
 					break;
 			}
-
-//			if (elm != null) {
-//				System.out.println(get());
-//				continue;
-//			}
-
-
 			if (funcFlg) {
 				ft = peek().getType();
 				String tempStr = stack.poll();
@@ -67,9 +59,7 @@ public class ExpressionNode extends Node {
 			} else if (see(LexicalType.LP)) {
 				lp_cnt++;
 				op_stack.addFirst(sValue);
-				handle(Symbol.expr);
-//				continue;
-				break;
+				continue;
 			} else if (ft == LexicalType.NL) {
 				break;
 			} else if (ft == LexicalType.COMMA) {
