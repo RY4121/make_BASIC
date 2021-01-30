@@ -1,9 +1,15 @@
 package newlang5;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class StatementNode extends Node {
+	List<Node> bodyList;
+	Node body;
 
 	public StatementNode(Environment env) {
 		super(env);
+		bodyList = new LinkedList<>();
 	}
 
 	@Override
@@ -13,11 +19,13 @@ public class StatementNode extends Node {
 			return;
 		} else if (ft == LexicalType.FOR) {
 			expect(LexicalType.FOR);
-			handle(Symbol.subst);
+			body = handle(Symbol.subst);
+			bodyList.add(body);
 			expect(LexicalType.TO);
 			expect(LexicalType.INTVAL);
 			expect(LexicalType.NL);
-			handle(Symbol.stmt_list);
+			body = handle(Symbol.stmt_list);
+			bodyList.add(body);
 			expect(LexicalType.NEXT);
 			expect(LexicalType.NAME);
 			return;
@@ -25,9 +33,19 @@ public class StatementNode extends Node {
 
 		ft = peek2().getType();
 		if (ft == LexicalType.EQ) {
-			handle(Symbol.subst);
+			body = handle(Symbol.subst);
+			bodyList.add(body);
 		} else if (ft == LexicalType.LP) {
-			handle(Symbol.call_func);
+			body = handle(Symbol.call_func);
+			bodyList.add(body);
 		}
+	}
+
+	@Override
+	public Value getValue() throws Exception {
+		for (Node p : bodyList) {
+			p.getValue();
+		}
+		return null;
 	}
 }

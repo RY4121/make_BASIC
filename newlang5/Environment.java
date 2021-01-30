@@ -5,15 +5,24 @@ import java.util.Map;
 
 public class Environment {
 	LexicalAnalyzer input;
-	Map<String, Variable> var_table;
+	Map<String, Function> library; // function
+	Map<String, Variable> var_table; // variable
 
 	public Environment(LexicalAnalyzer input) {
 		this.input = input;
+		library = new HashMap<>();
+		library.put("PRINT", new PrintFunction());
+		library.put("POW", new Pow());
+		library.put("SIN", new Sin());
 		var_table = new HashMap<String, Variable>();
 	}
 
 	public LexicalAnalyzer getInput() {
 		return input;
+	}
+
+	public Function getFunction(String fname) {
+		return (Function) library.get(fname);
 	}
 
 	public Variable getVariable(String vname) {
@@ -22,6 +31,7 @@ public class Environment {
 			v = new Variable(vname);
 			var_table.put(vname, v);
 		}
+		System.out.println("\tEnv#getVariable()#v.var_name\t" + v.var_name);
 		return v;
 	}
 }

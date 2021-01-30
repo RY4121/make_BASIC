@@ -11,4 +11,9 @@ public class ProgramNode extends Node {
 	public void parse() throws Exception {
 		body = handle(Symbol.stmt_list);
 	}
+
+	@Override
+	public Value getValue() throws Exception {
+		return body.getValue();
+	}
 }

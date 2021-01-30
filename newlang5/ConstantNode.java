@@ -20,4 +20,9 @@ public class ConstantNode extends Node {
 				error("syntax error");
 		}
 	}
+
+	@Override
+	public Value getValue() {
+		return value;
+	}
 }

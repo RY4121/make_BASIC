@@ -1,6 +1,8 @@
 package newlang5;
 
 public class LoopNode extends Node {
+	Node elm;
+	Node stmtBody;
 
 	public LoopNode(Environment env) {
 		super(env);
@@ -9,9 +11,9 @@ public class LoopNode extends Node {
 	@Override
 	public void parse() throws Exception {
 		if (see(LexicalType.WHILE)) {
-			handle(Symbol.cond);
+			elm = handle(Symbol.cond);
 			expect(LexicalType.NL);
-			handle(Symbol.stmt_list);
+			stmtBody = handle(Symbol.stmt_list);
 			expect(LexicalType.WEND);
 			expect(LexicalType.NL);
 			return;
@@ -22,9 +24,9 @@ public class LoopNode extends Node {
 			case UNTIL:
 				// <cond> <NL> <stmt_list> <LOOP> <NL>
 				expect(LexicalType.UNTIL);
-				handle(Symbol.cond);
+				elm = handle(Symbol.cond);
 				expect(LexicalType.NL);
-				handle(Symbol.stmt_list);
+				stmtBody = handle(Symbol.stmt_list);
 				expect(LexicalType.LOOP);
 				expect(LexicalType.NL);
 				return;
@@ -51,5 +53,14 @@ public class LoopNode extends Node {
 			default:
 				error("syntax error");
 		}
+	}
+
+	@Override
+	public Value getValue() throws Exception {
+		System.out.println("Loop#getValue()");
+		while (!elm.getValue().getBValue()) {
+			stmtBody.getValue();
+		}
+		return null;
 	}
 }

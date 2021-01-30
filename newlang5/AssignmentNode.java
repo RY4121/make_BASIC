@@ -1,6 +1,8 @@
 package newlang5;
 
 public class AssignmentNode extends Node {
+    Node left;
+    Node right;
 
     public AssignmentNode(Environment env) {
         super(env);
@@ -8,9 +10,16 @@ public class AssignmentNode extends Node {
 
     @Override
     public void parse() throws Exception {
-        handle(Symbol.leftvar);
+        left = handle(Symbol.leftvar);
         expect(LexicalType.EQ);
         assFlg = true;
-        handle(Symbol.expr);
+        right = handle(Symbol.expr);
+    }
+
+    @Override
+    public Value getValue() throws Exception {
+        System.out.println("\t\tAss#getValue()\t");
+        ((VariableNode) left).setValue(right.getValue());
+        return null;
     }
 }

@@ -9,10 +9,16 @@ public class BlockNode extends Node {
 
 	@Override
 	public void parse() throws Exception {
-		body = peek_handle(Symbol.loop);
-		if (body != null) {
+		Node elm = peek_handle(Symbol.loop);
+		if (elm != null) {
+			body = elm;
 			return;
 		}
-		handle(Symbol.if_prefix);
+		body = handle(Symbol.if_prefix);
+	}
+
+	@Override
+	public Value getValue() throws Exception {
+		return body.getValue();
 	}
 }

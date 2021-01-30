@@ -1,6 +1,10 @@
 package newlang5;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class StatementListNode extends Node {
+	List<Node> body = new LinkedList<>();
 
 	public StatementListNode(Environment env) {
 		super(env);
@@ -18,7 +22,11 @@ public class StatementListNode extends Node {
 
 			if (elm == null) {
 				elm = peek_handle(Symbol.block);
+				if (elm != null) {
+					body.add(elm);
+				}
 			} else {
+				body.add(elm);
 				continue;
 			}
 
@@ -28,5 +36,13 @@ public class StatementListNode extends Node {
 
 			break;
 		}
+	}
+
+	@Override
+	public Value getValue() throws Exception {
+		for (Node n : body) {
+			n.getValue();
+		}
+		return null;
 	}
 }

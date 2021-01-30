@@ -1,7 +1,7 @@
 package newlang5;
 
 public class VariableNode extends Node {
-	Value value;
+	Variable value;
 
 	public VariableNode(Environment env) {
 		super(env);
@@ -10,7 +10,18 @@ public class VariableNode extends Node {
 	@Override
 	public void parse() throws Exception {
 		LexicalUnit elm = get();
-		value = elm.getValue();
+		value = env.getVariable(elm.getValue().getSValue());
+		System.out.println("\t\t\ttest\t" + value.var_name);
 		return;
+	}
+
+	@Override
+	public Value getValue() {
+		System.out.println("\tVariable#getValue()");
+		return value.getValue();
+	}
+
+	public void setValue(Value value) {
+		this.value.setValue(value);
 	}
 }
