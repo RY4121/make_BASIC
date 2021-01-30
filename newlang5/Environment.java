@@ -31,7 +31,6 @@ public class Environment {
 			v = new Variable(vname);
 			var_table.put(vname, v);
 		}
-		System.out.println("\tEnv#getVariable()#v.var_name\t" + v.var_name);
 		return v;
 	}
 }

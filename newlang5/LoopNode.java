@@ -3,6 +3,7 @@ package newlang5;
 public class LoopNode extends Node {
 	Node elm;
 	Node stmtBody;
+	String loopType;
 
 	public LoopNode(Environment env) {
 		super(env);
@@ -11,6 +12,7 @@ public class LoopNode extends Node {
 	@Override
 	public void parse() throws Exception {
 		if (see(LexicalType.WHILE)) {
+			loopType = "WHILE";
 			elm = handle(Symbol.cond);
 			expect(LexicalType.NL);
 			stmtBody = handle(Symbol.stmt_list);
@@ -23,6 +25,7 @@ public class LoopNode extends Node {
 		switch (ft) {
 			case UNTIL:
 				// <cond> <NL> <stmt_list> <LOOP> <NL>
+				loopType = "UNTIL";
 				expect(LexicalType.UNTIL);
 				elm = handle(Symbol.cond);
 				expect(LexicalType.NL);
@@ -32,22 +35,25 @@ public class LoopNode extends Node {
 				return;
 			case WHILE:
 				// <cond> <NL> <stmt_list> <LOOP> <NL>
+				loopType = "DOWHILE";
 				expect(LexicalType.WHILE);
-				handle(Symbol.cond);
+				elm = handle(Symbol.cond);
 				expect(LexicalType.NL);
-				handle(Symbol.stmt_list);
+				stmtBody = handle(Symbol.stmt_list);
 				expect(LexicalType.LOOP);
 				expect(LexicalType.NL);
 				return;
 			case NL:
 				// <stmt_list> <LOOP> (<WHILE>|<UNTIL>) <cond> <NL>
+				loopType = "DO-WHILE";
 				expect(LexicalType.NL);
-				handle(Symbol.stmt_list);
+				stmtBody = handle(Symbol.stmt_list);
 				expect(LexicalType.LOOP);
 				if (!see(LexicalType.WHILE)) {
+					loopType = "DO-UNTIL";
 					expect(LexicalType.UNTIL);
 				}
-				handle(Symbol.cond);
+				elm = handle(Symbol.cond);
 				expect(LexicalType.NL);
 				return;
 			default:
@@ -57,9 +63,32 @@ public class LoopNode extends Node {
 
 	@Override
 	public Value getValue() throws Exception {
-		System.out.println("Loop#getValue()");
-		while (!elm.getValue().getBValue()) {
-			stmtBody.getValue();
+		switch (loopType) {
+			case "WHILE":
+			case "DOWHILE":
+				while (elm.getValue().getBValue()) {
+					stmtBody.getValue();
+				}
+				break;
+			case "UNTIL":
+				while (!elm.getValue().getBValue()) {
+					stmtBody.getValue();
+				}
+				break;
+			case "DO-WHILE":
+				stmtBody.getValue();
+				while (elm.getValue().getBValue()) {
+					stmtBody.getValue();
+				}
+				break;
+			case "DO-UNTIL":
+				stmtBody.getValue();
+				while (!elm.getValue().getBValue()) {
+					stmtBody.getValue();
+				}
+				break;
+			default:
+				break;
 		}
 		return null;
 	}

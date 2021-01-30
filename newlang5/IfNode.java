@@ -58,19 +58,24 @@ public class IfNode extends Node {
 
 	@Override
 	public Value getValue() throws Exception {
+		boolean isIfFin = false;
 		boolean condition = false;
 		for (Node p : bodyList) {
 			String pname = p.getClass().getSimpleName();
 			if (pname.equals("CondNode")) {
 				condition = p.getValue().getBValue();
-			} else {
-				if (!condition) {
-					condition = true;
+				continue;
+			}
+			if (condition) {
+				if (isIfFin) {
 					continue;
-				} else {
-					condition = false;
-					p.getValue();
 				}
+				isIfFin = true;
+				condition = false;
+				p.getValue();
+			} else {
+				condition = true;
+				continue;
 			}
 		}
 		return null;

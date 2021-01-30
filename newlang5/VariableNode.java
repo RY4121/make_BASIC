@@ -11,13 +11,11 @@ public class VariableNode extends Node {
 	public void parse() throws Exception {
 		LexicalUnit elm = get();
 		value = env.getVariable(elm.getValue().getSValue());
-		System.out.println("\t\t\ttest\t" + value.var_name);
 		return;
 	}
 
 	@Override
 	public Value getValue() {
-		System.out.println("\tVariable#getValue()");
 		return value.getValue();
 	}
 

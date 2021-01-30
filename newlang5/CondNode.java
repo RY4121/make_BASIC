@@ -31,11 +31,8 @@ public class CondNode extends Node {
 
 	@Override
 	public Value getValue() throws Exception {
-		System.out.println("Cond#getValue()" + elm1.getClass());
 		double lVal = elm1.getValue().getDValue();
 		double rVal = elm2.getValue().getDValue();
-		System.out.println("\tCond左辺\t" + elm1.getValue().getSValue());
-		System.out.println("\tCond右辺\t" + elm2.getValue().getSValue());
 
 		switch (ft) {
 			case EQ:

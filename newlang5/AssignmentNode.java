@@ -18,7 +18,6 @@ public class AssignmentNode extends Node {
 
     @Override
     public Value getValue() throws Exception {
-        System.out.println("\t\tAss#getValue()\t");
         ((VariableNode) left).setValue(right.getValue());
         return null;
     }

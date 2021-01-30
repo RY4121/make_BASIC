@@ -10,23 +10,13 @@ public class Main {
 		LexicalAnalyzer lex = new LexicalAnalyzerImpl(in);
 		Environment env = new Environment(lex);
 
-		// while (true) {
-		// LexicalUnit unit = lex.get();
-		// System.out.println(unit);
-		// if (unit.getType() == LexicalType.EOF)
-		// break;
-		// }
-
 		Node p = Symbol.program.handle(env);
-		// System.out.println(p);
-		// System.out.println(p.polish_list);
-		System.out.println("字句解析終了");
-		System.out.println(p.getValue());
-		// try {
-		// System.out.println(p.getValue().getSValue());
-		// } catch (Exception e) {
-		// System.out.println(e);
-		// System.out.println("end of program");
-		// }
+		try {
+			p.getValue();
+		} catch (Exception e) {
+			System.out.println("syntax error");
+			e.printStackTrace();
+		}
+		System.out.println("end of program");
 	}
 }

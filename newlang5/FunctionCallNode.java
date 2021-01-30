@@ -24,7 +24,7 @@ public class FunctionCallNode extends Node {
 	}
 
 	@Override
-	public Value getValue() throws Exception { // 関数呼び出しを実行する
+	public Value getValue() throws Exception {
 		return function.invoke(args);
 	}
 }

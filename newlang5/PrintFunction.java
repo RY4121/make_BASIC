@@ -11,7 +11,7 @@ public class PrintFunction extends Function {
         for (Node n : args) {
             msg += n.getValue().getSValue();
         }
-        System.out.println("\t\t\t\tPRINT出力\t" + msg);
+        System.out.println(msg);
         return null;
     }
 }
